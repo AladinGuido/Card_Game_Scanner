@@ -1,9 +1,12 @@
 package com.example.card_game_scanner;
 
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -36,5 +39,23 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(scannerActivity);
             }
         });
+
+        getPermissions();
+    }
+
+    void getPermissions()
+    {
+        if(checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+        {
+            requestPermissions(new String[]{Manifest.permission.CAMERA}, 101);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_DENIED){
+            getPermissions();
+        }
     }
 }
