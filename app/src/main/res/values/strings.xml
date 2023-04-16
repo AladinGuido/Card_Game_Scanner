@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Card_Game_Scanner</string>
+    <string name="startScanning">Start Scanning</string>
 </resources>
