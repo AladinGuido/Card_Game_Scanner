@@ -44,24 +44,6 @@ public class ScannerActivity extends CameraActivity {
 
             @Override
             public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
-                Mat imageOutput = inputFrame.rgba();
-                Imgproc.cvtColor(imageOutput, imageOutput, Imgproc.COLOR_BGR2GRAY);
-
-                Mat blurredImage = new Mat();
-                Size kernelSize = new Size(15, 15);
-                Imgproc.GaussianBlur(imageOutput, blurredImage, kernelSize, 0);
-
-                int img_w = imageOutput.cols(); // Get image width
-                int img_h = imageOutput.rows(); // Get image height
-                int bkg_level = (int)imageOutput.get(img_h / 100, img_w / 2)[0]; // Get pixel value at 1% of image height and center of image width
-                int BKG_THRESH = 50; // Define threshold value
-                int thresh_level = bkg_level + BKG_THRESH; // Calculate threshold level
-
-
-                Mat thresh = new Mat();
-                Core.inRange(blurredImage, new Scalar(thresh_level), new Scalar(255), thresh);
-
-
 
                 return getImageThreshold(inputFrame);
             }
