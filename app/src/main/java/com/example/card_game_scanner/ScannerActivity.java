@@ -1,26 +1,25 @@
 package com.example.card_game_scanner;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Context;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraManager;
-import android.media.Image;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
+import android.os.Environment;
 import android.util.Log;
-import android.view.SurfaceView;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
 
 import org.opencv.android.CameraActivity;
 import org.opencv.android.CameraBridgeViewBase;
-import org.opencv.android.JavaCameraView;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 public class ScannerActivity extends CameraActivity {
@@ -34,11 +33,11 @@ public class ScannerActivity extends CameraActivity {
         setContentView(R.layout.activity_scanner);
 
         cameraBridgeViewBase = findViewById(R.id.cameraView);
-
+        final CardImageProcessing cardImageProcessing = new CardImageProcessing();
 
         cameraBridgeViewBase.setCvCameraViewListener(new CameraBridgeViewBase.CvCameraViewListener2() {
 
-            CardImageProcessing cardImageProcessing = new CardImageProcessing();
+
 
 
 
@@ -59,8 +58,24 @@ public class ScannerActivity extends CameraActivity {
                 MatOfPoint2f largestContour = cardImageProcessing.getContours(preProcessImage);
                 if(largestContour != null)
                 {
-                    outputImage = cardImageProcessing.warpImage(inputFrame.rgba(), largestContour);
+                    Mat toSave = cardImageProcessing.warpImage(inputFrame.rgba(), largestContour, 661, 1028);
+
+                    // Get the directory where you want to save the file
+                    //File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+
+                    //Imgcodecs.imwrite(directory + "/output.png", toSave);
+                    //Log.d("test", "filepath: " + directory + "output.png");
+
+                    MatOfPoint contours = new MatOfPoint();
+                    largestContour.convertTo(contours, CvType.CV_32S);
+
+                    Mat drawing = new Mat(outputImage.rows(), outputImage.cols(), CvType.CV_8UC3);
+                    drawing.setTo(new Scalar(0, 0, 0)); // Set the drawing color to black
+                    Imgproc.drawContours(drawing, Arrays.asList(contours), -1, new Scalar(0, 255, 0), 2); // Draw the contours in green with a thickness of 2
+
+                    Core.addWeighted(outputImage, 1, drawing, 0.5, 0, outputImage);
                 }
+
 
                 return outputImage;
             }

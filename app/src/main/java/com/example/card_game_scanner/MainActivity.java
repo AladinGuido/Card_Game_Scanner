@@ -8,10 +8,9 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-
-import org.opencv.android.OpenCVLoader;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,14 +39,33 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        getPermissions();
+        getCameraPermissions();
+        getStoragePermissions();
     }
 
-    void getPermissions()
+    void getCameraPermissions()
     {
+        Log.d("Permissions", "Check Camera Permissions");
         if(checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
         {
             requestPermissions(new String[]{Manifest.permission.CAMERA}, 101);
+        }
+        else
+        {
+            Log.d("Permissions", "Camera Permissions Granted");
+        }
+    }
+
+    void getStoragePermissions()
+    {
+        Log.d("Permissions", "Check Write Permissions");
+        if(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+        {
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 102);
+        }
+        else
+        {
+            Log.d("Permissions", "Storage Write Permissions Granted");
         }
     }
 
@@ -55,7 +73,11 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if(grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_DENIED){
-            getPermissions();
+            if (requestCode == 101) {
+                getCameraPermissions();
+            } else if (requestCode == 102) {
+                getStoragePermissions();
+            }
         }
     }
 }

@@ -126,16 +126,16 @@ public class CardImageProcessing {
         return  largestMatOfPoint;
     }
 
-    public Mat warpImage(Mat unprocessedImage, MatOfPoint2f largestMatOfPoint)
+    public Mat warpImage(Mat unprocessedImage, MatOfPoint2f largestMatOfPoint, int warpWidth, int warpHeight)
     {
-        Mat outputMat = Mat.zeros(unprocessedImage.rows(), unprocessedImage.cols(), unprocessedImage.type());;
+        Mat outputMat = Mat.zeros(warpWidth, warpHeight, unprocessedImage.type());;
         Point[] sourcePoints = largestMatOfPoint.toArray();
 
         Point[] destPoints = new Point[4];
         destPoints[0] = new Point(0, 0);
-        destPoints[1] = new Point(unprocessedImage.cols(), 0);
-        destPoints[2] = new Point(unprocessedImage.cols(), unprocessedImage.rows());
-        destPoints[3] = new Point(0, unprocessedImage.rows());
+        destPoints[1] = new Point(warpWidth, 0);
+        destPoints[2] = new Point(warpWidth, warpHeight);
+        destPoints[3] = new Point(0, warpHeight);
 
         Mat perspectiveTransform = Imgproc.getPerspectiveTransform(new MatOfPoint2f(sourcePoints), new MatOfPoint2f(destPoints));
 
